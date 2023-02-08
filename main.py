@@ -8,6 +8,8 @@ def download_nltk():
 
 
 if __name__ == '__main__':
-    download_nltk()
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    # download_nltk()
+    file = open('squirrel.txt', 'r')
+    for line in file:
+        print(line)
+    file.close()
