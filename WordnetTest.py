@@ -24,6 +24,9 @@ class WordnetTest:
                 # Dividir la línea en palabras
                 words = line.strip().split()
                 for word in words:
+                    # verificar si es un sustantivo
+                    if not wordnet.synsets(word, pos=wordnet.NOUN):
+                        continue
                     # Buscar synset (conjunto de sinónimos) de la palabra
                     synsets: List[Synset] = wordnet.synsets(word)
                     for synset in synsets:
