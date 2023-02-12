@@ -1,15 +1,21 @@
-from typing import List
-
 import nltk
+import networkx as nx
+from typing import List
+from matplotlib import pyplot as plt
 from nltk.corpus import wordnet
 from nltk.corpus.reader.wordnet import Synset
+import scipy as sp
 
 
 class WordnetTest:
 
-    def __init__(self):
-        # self.file_name: str = 'squirrel.txt'
-        self.file_name: str = 'test2.txt'
+    @staticmethod
+    def download_nltk_data():
+        nltk.download('wordnet')
+        nltk.download('omw-1.4')
+
+    def __init__(self, file_name: str):
+        self.file_name: str = file_name
         self.tree: List[tuple[str, str]] = []
 
     def run(self):
@@ -35,11 +41,27 @@ class WordnetTest:
         for parent, child in self.tree:
             print(f'{parent} -> {child}')
 
+    # graficar el arbol
+    def plot_tree(self):
+        # create directed graph
+        graph = nx.DiGraph()
+        graph.add_edges_from(self.tree)
+        plt.figure(figsize=(10, 10))
+        nx.draw(
+            graph,
+            with_labels=True,
+            node_color='skyblue',
+            node_size=1500,
+            edge_cmap=plt.cm.Blues,
+            font_size=8,
+        )
+        plt.show()
+
 
 if __name__ == '__main__':
-    # nltk.download('wordnet')
-    # nltk.download('omw-1.4')
-
-    wordnet_test = WordnetTest()
+    file_name: str = 'squirrel.txt'
+    # file_name: str = 'test2.txt'
+    wordnet_test = WordnetTest(file_name)
     wordnet_test.run()
     wordnet_test.print_tree()
+    # wordnet_test.plot_tree()
