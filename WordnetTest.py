@@ -2,6 +2,7 @@ import nltk
 import networkx as nx
 from typing import List
 from matplotlib import pyplot as plt
+from networkx import Graph
 from nltk.corpus import wordnet
 from nltk.corpus.reader.wordnet import Synset
 import scipy as sp
@@ -16,7 +17,7 @@ class WordnetTest:
 
     def __init__(self, file_name: str):
         self.file_name: str = file_name
-        self.tree: List[tuple[str, str]] = []
+        self.graph: Graph = nx.Graph()
 
     def run(self):
         with open(self.file_name, 'r') as file:
@@ -34,24 +35,18 @@ class WordnetTest:
                         hypernyms: List[Synset] = synset.hypernyms()
                         for hypernym in hypernyms:
                             for lemma in hypernym.lemma_names():
-                                self.tree.append((lemma, word))
+                                self.graph.add_edge(lemma, word)
                         hyponyms: List[Synset] = synset.hyponyms()
                         for hyponym in hyponyms:
                             for lemma in hyponym.lemma_names():
-                                self.tree.append((word, lemma))
-
-    def print_tree(self):
-        for parent, child in self.tree:
-            print(f'{parent} -> {child}')
+                                self.graph.add_edge(word, lemma)
 
     # graficar el arbol
     def plot_tree(self):
         # create directed graph
-        graph = nx.DiGraph()
-        graph.add_edges_from(self.tree)
         plt.figure(figsize=(10, 10))
         nx.draw(
-            graph,
+            self.graph,
             with_labels=True,
             node_color='skyblue',
             node_size=1500,
@@ -60,11 +55,19 @@ class WordnetTest:
         )
         plt.show()
 
+    def get_degree_centrality(self):
+        degree_centrality = nx.degree_centrality(self.graph)
+        sorted(degree_centrality.items(), key=lambda x: x[1], reverse=True)
+        return degree_centrality
+
 
 if __name__ == '__main__':
     file_name: str = 'squirrel.txt'
     # file_name: str = 'test2.txt'
     wordnet_test = WordnetTest(file_name)
     wordnet_test.run()
-    wordnet_test.print_tree()
+    degree_centrality = wordnet_test.get_degree_centrality()
+    print(degree_centrality)
     # wordnet_test.plot_tree()
+
+    {'metric_linear_unit': 0.0011331444759206798, 'a': 0.008498583569405098}
